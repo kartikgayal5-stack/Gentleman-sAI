@@ -1,0 +1,16 @@
+{
+  "name": "gentlemans-ai",
+  "version": "1.0.0",
+  "description": "Gentleman's AI - Sophisticated AI Chatbot",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.1.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
