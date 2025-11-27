@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gentleman's AI - Intelligent Conversation Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .logo-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            opacity: 0.8;
+            color: #bdc3c7;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+            color: white !important;
+            padding: 12px 24px !important;
+            border-radius: 25px !important;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(46, 204, 113, 0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h2 {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 22px;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-button {
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+            transition: all 0.3s;
+        }
+
+        .hero-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(52, 152, 219, 0.5);
+        }
+
+        .features {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .features h3 {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 60px;
+            color: #2c3e50;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 45px rgba(52, 152, 219, 0.2);
+            border: 2px solid #3498db;
+        }
+
+        .feature-card h4 {
+            font-size: 26px;
+            margin-bottom: 18px;
+            color: #2c3e50;
+        }
+
+        .feature-card p {
+            color: #555;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .developer-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            padding: 80px 20px;
+            margin-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .developer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .developer-content h3 {
+            font-size: 42px;
+            margin-bottom: 35px;
+        }
+
+        .developer-content p {
+            font-size: 19px;
+            line-height: 1.9;
+            opacity: 0.95;
+        }
+
+        .developer-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+            padding: 12px 30px;
+            border-radius: 25px;
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .chat-section {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+            overflow: hidden;
+            border: 3px solid #e0e0e0;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .chat-header h4 {
+            font-size: 28px;
+        }
+
+        .chat-messages {
+            height: 550px;
+            overflow-y: auto;
+            padding: 25px;
+            background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .message {
+            margin-bottom: 25px;
+            animation: messageSlide 0.4s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #2c3e50;
+        }
+
+        .user-message {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .user-message .message-content {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 18px 24px;
+            border-radius: 22px 22px 0 22px;
+            max-width: 70%;
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .bot-message {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .bot-message .message-content {
+            background: white;
+            color: #1a1a1a;
+            padding: 18px 24px;
+            border-radius: 22px 22px 22px 0;
+            max-width: 70%;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            border: 2px solid #e8f4f8;
+        }
+
+        .chat-input-container {
+            padding: 25px;
+            background: white;
+            border-top: 3px solid #e8f4f8;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 18px 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 28px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+
+        .send-button {
+            padding: 18px 35px;
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 28px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .send-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .clear-button {
+            padding: 12px 24px;
+            background: white;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .clear-button:hover {
+            background: #e74c3c;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 18px 24px;
+            background: white;
+            border-radius: 22px;
+            max-width: 80px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            border: 2px solid #e8f4f8;
+        }
+
+        .typing-indicator span {
+            height: 12px;
+            width: 12px;
+            background: #3498db;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 36px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                gap: 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo-container">
+                <div class="logo">G</div>
+                <div class="logo-text">
+                    <h1>Gentleman's AI</h1>
+                    <p>Sophisticated Intelligence</p>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#chat" class="cta-button">Chat Now 💬</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>🎩 Welcome to Gentleman's AI</h2>
+            <p>Experience the pinnacle of artificial intelligence - sophisticated, elegant, and incredibly powerful. Your refined companion for intelligent conversations.</p>
+            <button class="hero-button" onclick="scrollToChat()">Start Chatting Now 🚀</button>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <h3>✨ Distinguished Features</h3>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h4>🧠 Superior Intelligence</h4>
+                <p>Powered by Google Gemini AI, delivering sophisticated and accurate responses to any inquiry.</p>
+            </div>
+            <div class="feature-card">
+                <h4>💾 Perfect Memory</h4>
+                <p>Every conversation is elegantly preserved and restored automatically across all sessions.</p>
+            </div>
+            <div class="feature-card">
+                <h4>⚡ Instant Responses</h4>
+                <p>Lightning-fast performance with optimized architecture. Seamless conversations without delay.</p>
+            </div>
+            <div class="feature-card">
+                <h4>🎨 Refined Design</h4>
+                <p>Meticulously crafted interface combining elegant aesthetics with intuitive functionality.</p>
+            </div>
+            <div class="feature-card">
+                <h4>😊 Expressive Communication</h4>
+                <p>Intelligent emoji integration creating engaging and personable conversations.</p>
+            </div>
+            <div class="feature-card">
+                <h4>🔒 Privacy First</h4>
+                <p>Secure backend architecture protects your API keys and conversation data.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="developer-section" id="about">
+        <div class="developer-content">
+            <h3>👔 Crafted by a Gentleman</h3>
+            <p>Gentleman's AI was meticulously crafted by a distinguished developer who believes that technology should be both powerful and elegant. With refined taste for design and deep understanding of AI, this platform represents the perfect marriage of sophistication and cutting-edge technology.</p>
+            <p style="margin-top: 25px;">The vision is simple yet profound: to create an AI companion that answers questions with precision while maintaining style and grace. Every feature has been thoughtfully designed to provide an experience worthy of a gentleman.</p>
+            <div class="developer-badge">🎩 Built with Excellence & Refinement</div>
+        </div>
+    </section>
+
+    <section class="chat-section" id="chat">
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <h4>💬 Begin Your Sophisticated Conversation</h4>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    <div>
+                        <div class="message-title">🎩 Gentleman's AI</div>
+                        <div class="message-content">
+                            Good day! 👋 I'm Gentleman's AI, your refined and intelligent companion. How may I be of service today? 🚀
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        id="userInput" 
+                        placeholder="Pose your question here..."
+                    >
+                    <button class="send-button" onclick="sendMessage()" id="sendButton">
+                        Send 📤
+                    </button>
+                </div>
+                <button class="clear-button" onclick="clearHistory()">🗑️ Clear History</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2024 Gentleman's AI. Crafted with sophistication and powered by advanced AI technology.</p>
+        <p style="margin-top: 12px; opacity: 0.85;">Bringing elegance to intelligent conversations.</p>
+    </footer>
+
+    <script>
+        let conversationHistory = [];
+
+        // API endpoint - Change this to your Vercel backend URL after deployment
+        const API_URL = '/api/chat';
+
+        function scrollToChat() {
+            const chatSection = document.getElementById('chat');
+            chatSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        });
+
+        function loadHistory() {
+            try {
+                const saved = localStorage.getItem('gentlemans_ai_chat_history');
+                if (saved) {
+                    conversationHistory = JSON.parse(saved);
+                    document.getElementById('chatMessages').innerHTML = '';
+                    conversationHistory.forEach(msg => {
+                        displayMessage(msg.role, msg.content);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        function saveHistory() {
+            try {
+                localStorage.setItem('gentlemans_ai_chat_history', JSON.stringify(conversationHistory));
+            } catch (error) {
+                console.error('Error saving history:', error);
+            }
+        }
+
+        function displayMessage(role, content) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}-message`;
+            
+            const title = role === 'user' ? '👤 You' : '🎩 Gentleman\'s AI';
+            
+            messageDiv.innerHTML = `
+                <div>
+                    <div class="message-title">${title}</div>
+                    <div class="message-content">${content}</div>
+                </div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator" style="display: block;">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendButton');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            input.disabled = true;
+            sendButton.disabled = true;
+
+            displayMessage('user', message);
+            conversationHistory.push({ role: 'user', content: message });
+            saveHistory();
+            
+            input.value = '';
+            showTypingIndicator();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        history: conversationHistory
+                    })
+                });
+
+                const data = await response.json();
+                hideTypingIndicator();
+
+                if (data.response) {
+                    displayMessage('bot', data.response);
+                    conversationHistory.push({ role: 'assistant', content: data.response });
+                    saveHistory();
+                } else {
+                    throw new Error(data.error || 'Invalid response from server');
+                }
+
+            } catch (error) {
+                hideTypingIndicator();
+                displayMessage('bot', `⚠️ My apologies, I encountered an error: ${error.message}`);
+            }
+
+            input.disabled = false;
+            sendButton.disabled = false;
+            input.focus();
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function clearHistory() {
+            if (confirm('Are you certain you wish to clear all conversation history? 🗑️')) {
+                conversationHistory = [];
+                localStorage.removeItem('gentlemans_ai_chat_history');
+                
+                document.getElementById('chatMessages').innerHTML = `
+                    <div class="message bot-message">
+                        <div>
+                            <div class="message-title">🎩 Gentleman's AI</div>
+                            <div class="message-content">
+                                Good day! 👋 I'm Gentleman's AI, your refined and intelligent companion. How may I be of service today? 🚀
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        window.addEventListener('load', loadHistory);
+    </script>
+</body>
+</html>
