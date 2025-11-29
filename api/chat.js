@@ -1,6 +1,6 @@
 // api/chat.js - Vercel Serverless Function
 // This handles the backend API calls to Gemini
-
+require("dotenv").config({ path: ".env.local" });
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Add emoji support function
