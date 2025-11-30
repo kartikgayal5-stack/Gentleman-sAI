@@ -488,6 +488,15 @@
             margin-top: 80px;
         }
 
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid #fcc;
+        }
+
         ::-webkit-scrollbar {
             width: 10px;
         }
@@ -622,7 +631,7 @@
     <script>
         let conversationHistory = [];
 
-        // API endpoint - Change this to your Vercel backend URL after deployment
+        // API endpoint
         const API_URL = '/api/chat';
 
         function scrollToChat() {
@@ -646,8 +655,15 @@
                 if (saved) {
                     conversationHistory = JSON.parse(saved);
                     document.getElementById('chatMessages').innerHTML = '';
+                    
+                    // Add welcome message
+                    displayMessage('bot', 'Good day! 👋 I\'m Gentleman\'s AI, your refined and intelligent companion. How may I be of service today? 🚀', false);
+                    
+                    // Load history
                     conversationHistory.forEach(msg => {
-                        displayMessage(msg.role, msg.content);
+                        if (msg.role !== 'system') {
+                            displayMessage(msg.role === 'user' ? 'user' : 'bot', msg.content, false);
+                        }
                     });
                 }
             } catch (error) {
@@ -663,10 +679,11 @@
             }
         }
 
-        function displayMessage(role, content) {
+        function displayMessage(role, content, animate = true) {
             const messagesContainer = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role}-message`;
+            messageDiv.className = `message ${role === 'user' ? 'user' : 'bot'}-message`;
+            if (!animate) messageDiv.style.animation = 'none';
             
             const title = role === 'user' ? '👤 You' : '🎩 Gentleman\'s AI';
             
@@ -733,6 +750,10 @@
                     })
                 });
 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
                 hideTypingIndicator();
 
@@ -746,7 +767,8 @@
 
             } catch (error) {
                 hideTypingIndicator();
-                displayMessage('bot', `⚠️ My apologies, I encountered an error: ${error.message}`);
+                console.error('Detailed error:', error);
+                displayMessage('bot', `⚠️ My apologies, I encountered an error: ${error.message}. Please ensure your API is properly configured.`);
             }
 
             input.disabled = false;
