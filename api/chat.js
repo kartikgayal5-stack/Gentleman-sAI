@@ -1,6 +1,4 @@
 // api/chat.js - Vercel Serverless Function
-// This handles the backend API calls to Gemini
-require("dotenv").config({ path: ".env.local" });
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Add emoji support function
@@ -9,15 +7,18 @@ function addEmojis(text) {
         'hello': '👋',
         'hi': '👋',
         'bye': '👋',
+        'goodbye': '👋',
         'thanks': '🙏',
         'thank you': '🙏',
         'help': '🤝',
         'good': '👍',
         'great': '🌟',
+        'excellent': '⭐',
         'love': '❤️',
         'happy': '😊',
         'sad': '😢',
         'code': '💻',
+        'coding': '💻',
         'programming': '💻',
         'python': '🐍',
         'javascript': '⚡',
@@ -41,16 +42,23 @@ function addEmojis(text) {
         'world': '🌍',
         'star': '⭐',
         'rocket': '🚀',
-        'fire': '🔥'
+        'fire': '🔥',
+        'computer': '💻',
+        'phone': '📱',
+        'email': '📧'
     };
 
     let result = text;
     const lowerText = text.toLowerCase();
     
+    // Find matching emoji
     for (const [keyword, emoji] of Object.entries(emojiMap)) {
         if (lowerText.includes(keyword)) {
-            result += ' ' + emoji;
-            break;
+            // Only add emoji if it's not already in the text
+            if (!result.includes(emoji)) {
+                result += ' ' + emoji;
+            }
+            break; // Only add one emoji per response
         }
     }
 
@@ -82,22 +90,33 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'Message is required' });
         }
 
+        // Check if API key is set
+        if (!process.env.GEMINI_API_KEY) {
+            return res.status(500).json({ 
+                error: 'API key not configured. Please add GEMINI_API_KEY to your environment variables.' 
+            });
+        }
+
         // Initialize Gemini AI with your API key from environment variable
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-        // Build conversation history for context
-        let conversationContext = history
-            .slice(-10) // Keep last 10 messages for context
+        // Build conversation history for context (keep last 10 messages)
+        const relevantHistory = history ? history.slice(-10) : [];
+        
+        let conversationContext = relevantHistory
+            .filter(msg => msg.role !== 'system')
             .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
             .join('\n');
 
-        // Create the prompt with context
+        // Create the prompt with context and personality
+        const systemPrompt = "You are Gentleman's AI, a sophisticated and refined AI assistant. Respond with intelligence, clarity, and elegance. Be helpful, friendly, and professional.";
+        
         const prompt = conversationContext 
-            ? `${conversationContext}\n\nUser: ${message}\n\nAssistant:`
-            : `User: ${message}\n\nAssistant:`;
+            ? `${systemPrompt}\n\nConversation history:\n${conversationContext}\n\nUser: ${message}\n\nAssistant:`
+            : `${systemPrompt}\n\nUser: ${message}\n\nAssistant:`;
 
-        // Generate response
+        // Generate response with error handling
         const result = await model.generateContent(prompt);
         const response = await result.response;
         let aiResponse = response.text();
@@ -111,9 +130,20 @@ module.exports = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error details:', error);
+        
+        // Better error messages
+        let errorMessage = 'Failed to generate response';
+        if (error.message.includes('API key')) {
+            errorMessage = 'Invalid API key. Please check your GEMINI_API_KEY environment variable.';
+        } else if (error.message.includes('quota')) {
+            errorMessage = 'API quota exceeded. Please check your Gemini API usage.';
+        } else if (error.message.includes('network')) {
+            errorMessage = 'Network error. Please check your connection.';
+        }
+        
         return res.status(500).json({ 
-            error: 'Failed to generate response',
+            error: errorMessage,
             details: error.message 
         });
     }
